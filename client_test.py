@@ -1,9 +1,17 @@
 import cv2
 import urllib.request as url
 import numpy as np
+import sys
+
+if len(sys.argv) < 2:
+        print("Please supply an IP address")
+        sys.exit()
+else:
+        ip = sys.argv[1]
+        print("Connecting to server %s:5000" % ip)
 
 while cv2.waitKey(1) != 13:
-	resp = url.urlopen("http://127.0.0.1:5000")
+	resp = url.urlopen("http://%s:5000" % ip)
 	img = np.asarray(bytearray(resp.read()), dtype="uint8")
 	img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
