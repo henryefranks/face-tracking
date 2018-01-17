@@ -79,10 +79,7 @@ try:
 	cam.start()
 	print("Press Enter to quit")
 	while cv2.waitKey(5) != 13:
-		#img = cam.frame
-		resp = url.urlopen("http://127.0.0.1:5000")
-		img = np.asarray(bytearray(resp.read()), dtype="uint8")
-		img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+		img = cam.frame
 		bw = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 		faces = detect_faces(face_cascade, bw)
