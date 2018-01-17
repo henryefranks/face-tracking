@@ -10,8 +10,5 @@ def image():
 	if success:
 		imwrite('frame.jpg', f)
 	return send_file('frame.jpg', mimetype='image/jpeg')
-<<<<<<< HEAD
 
 app.run(host='0.0.0.0')
-=======
->>>>>>> dd8adbd... Added server

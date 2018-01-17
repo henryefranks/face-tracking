@@ -8,7 +8,6 @@ from os.path import abspath as ap
 from os import listdir as ls
 from operator import itemgetter
 from itertools import repeat
-<<<<<<< HEAD
 import sys
 
 if len(sys.argv) < 2:
@@ -17,9 +16,6 @@ if len(sys.argv) < 2:
 else:
 	ip = sys.argv[1]
 	print("Connecting to server %s:5000" % ip)
-=======
-import urllib.request as url
->>>>>>> dd8adbd... Added server
 
 print("Initialising...")
 
