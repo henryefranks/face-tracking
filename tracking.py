@@ -1,3 +1,8 @@
+##########################
+## Face Tracking Client ##
+##########################
+
+from __future__ import print_function
 import numpy as np
 import cv2
 from os.path import dirname as pwd
@@ -10,6 +15,7 @@ from operator import itemgetter
 from itertools import repeat
 import sys
 
+# IP input
 if len(sys.argv) < 2:
 	print("Please supply an IP address")
 	sys.exit()
@@ -20,14 +26,17 @@ else:
 print("Initialising...")
 
 def get_dist(name, known_encodings, unknown_encoding):
+	# Distance between known and unknown faces
     matches = list(np.linalg.norm(known_encodings[name] - unknown_encoding, axis=1))
     return name, float(sum(matches)) / len(matches)
 
 def face_encoding(face_image, predictor, encoder):
+	# Generate encoding for face
 	raw_landmark_set = predictor(face_image, dlib.rectangle(0, 0, face_image.shape[0], face_image.shape[1]))
 	return np.array(encoder.compute_face_descriptor(face_image, raw_landmark_set, 1))
 
 def detect_faces(cascade, image):
+	# Haar cascade detection
 	return cascade.detectMultiScale(
 		image,
 		scaleFactor=1.1,
@@ -40,7 +49,8 @@ frame = 0
 loc = pwd(ap(__file__))
 size = (640, 360)
 
-people = ls(loc + "/faces")
+# Getting list of people
+people = ls(loc + "/faces") # Scanning 'faces' folder for people
 if ".DS_Store" in people:
 	people.remove(".DS_Store")
 known_encodings = {}
@@ -51,7 +61,7 @@ print("   Initialising face recognition... ", end="")
 sys.stdout.flush()
 face_detector = dlib.get_frontal_face_detector()
 predictor_5_point_model = face_recognition_models.pose_predictor_five_point_model_location()
-pose_predictor_5_point = dlib.shape_predictor(predictor_5_point_model)
+pose_predictor = dlib.shape_predictor(predictor_5_point_model) # 5 point pose predictor
 face_recognition_model = face_recognition_models.face_recognition_model_location()
 face_encoder = dlib.face_recognition_model_v1(face_recognition_model)
 print("Done!")
@@ -66,11 +76,11 @@ print("Done!")
 
 print("   Initialising face data... ", end="")
 sys.stdout.flush()
-for name in people:
+for name in people: # Generate encoding for all known faces before scanning
 	path = loc + "/faces/" + name
 	if len(ls(path)) > 1:
 		known = [cv2.imread(path + "/" + file)[:, :, ::-1] for file in ls(path) if file != ".DS_Store"]
-		known_encodings[name] = [face_encoding(img, pose_predictor_5_point, face_encoder) for img in known]
+		known_encodings[name] = [face_encoding(img, pose_predictor, face_encoder) for img in known]
 print("Done!")
 
 print("Initialisation complete, starting webcam...")
@@ -78,13 +88,13 @@ print("Initialisation complete, starting webcam...")
 try:
 	cam.start()
 	print("Press Enter to quit")
-	while cv2.waitKey(5) != 13:
+	while cv2.waitKey(1) != 13:
 		img = cam.frame
 		bw = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 		faces = detect_faces(face_cascade, bw)
 
-		if frame & 1:
+		if frame & 1: # Clear cache or print cached faces
 			text_cache = []
 		else:
 			for name, pos in text_cache:
@@ -97,28 +107,33 @@ try:
 
 		for i, face in enumerate(faces):
 			x, y, w, h = face
-			if frame & 1:
+			if frame & 1: # Only update faces every other frame to increase speed
 				matches = {}
 				crop = img[y:y+h, x:x+w, ::-1]
 
-				unknown_encoding = face_encoding(crop, pose_predictor_5_point, face_encoder)
-				names = {key:value for key, value in map(get_dist, known_encodings.keys(), repeat(known_encodings), repeat(unknown_encoding))}
+				unknown_encoding = face_encoding(crop, pose_predictor, face_encoder)
+				names = {key:value for key, value in map(get_dist,
+					known_encodings.keys(),
+					repeat(known_encodings),
+					repeat(unknown_encoding)
+					)}
 
 				crop_string = "Face %d" % i
 
 				if any(s <= 0.6 for s in names.values()):
+					# Find most likely name for face
 					name = min(names.items(), key=itemgetter(1))[0]
-					cv2.putText(
+					cv2.putText( # Print name on frame
 						img,
 						name,
 						(x + 10, y + h - 15),
 						font, 1, (0, 0, 0),
 						2, cv2.LINE_AA
 					)
-					text_cache.append((name, (x + 10, y + h - 15)))
+					text_cache.append((name, (x + 10, y + h - 15))) # Cache for next frame 
 					crop_string += ": %s" % name
 
-			cv2.rectangle(
+			cv2.rectangle( # Rectangle around face
 				img,
 				(x, y),
 				(x+w, y+h),
@@ -130,6 +145,7 @@ try:
 		frame += 1
 
 except KeyboardInterrupt:
+	# Exit properly after ctrl-c
 	print(" Keyboard Interrupt")
 
 print("Exiting...")

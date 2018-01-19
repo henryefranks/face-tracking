@@ -1,3 +1,7 @@
+###########################
+## Video Streaming Class ##
+###########################
+
 import numpy as np
 import cv2
 from threading import Thread
@@ -16,12 +20,14 @@ class VideoStream(object):
 		t.start()
 
 	def get_frame(self):
+		# Get frame from server
 		server = url.urlopen("http://%s:5000" % self.ip)
 		img = np.asarray(bytearray(server.read()), dtype="uint8")
 		img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 		self.frame = cv2.resize(img, self.res)
 
 	def update(self):
+		# Frame update thread (run in background)
 		while True:
 			if self.stopped:
 				return
