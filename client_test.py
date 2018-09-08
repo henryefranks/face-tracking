@@ -22,4 +22,5 @@ while cv2.waitKey(1) != 13:
 	img = np.asarray(bytearray(resp.read()), dtype="uint8")
 	img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-	cv2.imshow("Client Test", img)
+	if img is not None:
+		cv2.imshow("Client Test", img)
