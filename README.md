@@ -1,4 +1,4 @@
-# OpenCV Face Tracking
+# OpenCV Face Tracking and Recognition
 
 Use either server.py (SimpleHTTPServer-based) or flask.py (Flask-based).
 
