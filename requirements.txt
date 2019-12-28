@@ -1,3 +1,4 @@
 dlib
 flask
 numpy
+face_recognition_models
