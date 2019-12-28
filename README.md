@@ -7,10 +7,15 @@ A tech demo of face tracking and recognition using OpenCV.
 
 ##### To run:
 `python server.py` to use the SimpleHTTPServer backend
+
 `python flask.py` to use the Flask backend
+
 *Note: there is no difference in functionality between the backends, the choice is down to user preference*
 
+---
+
 `python client_test.py` to view a direct stream from the webcam
+
 `python tracking.py` for facial recognition.
 
 ### Facial Recognition
