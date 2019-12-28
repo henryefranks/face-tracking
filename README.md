@@ -1,8 +1,19 @@
 # OpenCV Face Tracking and Recognition
+A tech demo of face tracking and recognition using OpenCV.
 
-The software runs as a server so any device on the network can view the stream. There are two options for the server backend: SimpleHTTPServer (`server.py`) or Flask (`flask.py`). The device running the server must be connected to the webcam to be used.
+## Setup
+##### To install:
+`pip install -r requirements.txt`
 
-On the client, run `client_test.py` to view a direct stream from the webcam or `tracking.py` for facial recognition.
+##### To run:
+`python server.py` to use the SimpleHTTPServer backend
+`python flask.py` to use the Flask backend
+*Note: there is no difference in functionality between the backends, the choice is down to user preference*
+
+`python client_test.py` to view a direct stream from the webcam
+`python tracking.py` for facial recognition.
 
 ### Facial Recognition
-Faces are found using a standard OpenCV classifier. By adding photos of a face to the `faces/` folder under a named subfolder, the software can recognise and identify the face on the webcam. For example, If a face detected on the webcam found a match against photos in the `faces/John` folder, it would identify the face as John.
+Faces are found using a standard OpenCV classifier. By adding photos of a face to the `faces/` directory under a named subfolder, the software can recognise and identify the face on the stream. For example, If a face detected on the stream found a match against photos in the `faces/John` folder, it would identify the face as John.
+
+To allow the software to recognise your face, simply create a folder with your name in the `faces/` directory and add photos of yourself.
